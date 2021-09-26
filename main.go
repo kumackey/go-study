@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"sync"
 	"time"
@@ -9,9 +10,9 @@ import (
 
 var wg sync.WaitGroup
 
-// キャンセルされるまでnumをひたすら送信し続けるチャネルを生成
 func generator(ctx context.Context, num int) <-chan int {
 	out := make(chan int)
+
 	go func() {
 		defer wg.Done()
 
@@ -19,8 +20,13 @@ func generator(ctx context.Context, num int) <-chan int {
 		for {
 			select {
 			case <-ctx.Done():
+				if err := ctx.Err(); errors.Is(err, context.Canceled) {
+					fmt.Println("canceled")
+				} else if errors.Is(err, context.DeadlineExceeded) {
+					fmt.Println("deadline")
+				}
 				break LOOP
-				// case out <- num: これが時間がかかっているという想定
+			case out <- num:
 			}
 		}
 
