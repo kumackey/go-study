@@ -1,32 +1,23 @@
 package main
 
-import (
-	"fmt"
-	"math/rand"
-	"sync"
-	"time"
-)
+import "fmt"
 
 func main() {
-	fmt.Println("what is today's lucky number?")
-	var wg sync.WaitGroup
-	wg.Add(1)
+	result := generator()
+	for i := 0; i < 5; i++ {
+		fmt.Println(<-result)
+	}
 
-	go func() {
-		defer wg.Done()
-		getLuckyNum()
-	}()
-
-	wg.Wait()
 }
 
-func getLuckyNum() {
-	fmt.Println("...")
+func generator() <-chan int {
+	result := make(chan int)
+	go func() {
+		defer close(result)
+		for {
+			result <- 1
+		}
 
-	// 占いにかかる時間はランダム
-	rand.Seed(time.Now().Unix())
-	time.Sleep(time.Duration(rand.Intn(3000)) * time.Millisecond)
-
-	num := rand.Intn(10)
-	fmt.Printf("Today's your lucky number is %d!\n", num)
+	}()
+	return result
 }
