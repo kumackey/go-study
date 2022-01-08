@@ -29,6 +29,10 @@ type Application struct {
 	status            Status     // 申請ステータス
 }
 
+func (a *Application) IsCreated() bool {
+	return a.status == Created
+}
+
 func (a *Application) IsApplying() bool {
 	return a.status == Submitted
 }
@@ -42,9 +46,13 @@ func (a *Application) IsRejected() bool {
 }
 
 func (a *Application) Submit(content string, submittedAt time.Time) error {
+	if !a.IsCreated() && !a.IsRejected() {
+		return ErrInvalidStatusTransition
+	}
+
 	a.content = content
 	a.submittedAt = &submittedAt
-	a.countOfSubmission = 1
+	a.countOfSubmission += 1
 	a.status = Submitted
 
 	return nil
@@ -71,18 +79,6 @@ func (a *Application) Reject(reviewer string, rejectedReason string, rejectedAt 
 	a.rejectedReason = rejectedReason
 	a.rejectedAt = &rejectedAt
 	a.status = Rejected
-
-	return nil
-}
-
-func (a *Application) Resubmit(content string) error {
-	if !a.IsRejected() {
-		return ErrInvalidStatusTransition
-	}
-
-	a.content = content
-	a.countOfSubmission += 1
-	a.status = Submitted
 
 	return nil
 }
