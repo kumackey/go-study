@@ -33,11 +33,11 @@ func (a *Application) IsApplying() bool {
 	return a.status == Submitted
 }
 
-func (a *Application) IsApproved() interface{} {
+func (a *Application) IsApproved() bool {
 	return a.status == Approved
 }
 
-func (a *Application) IsRejected() interface{} {
+func (a *Application) IsRejected() bool {
 	return a.status == Rejected
 }
 
@@ -76,6 +76,10 @@ func (a *Application) Reject(reviewer string, rejectedReason string, rejectedAt 
 }
 
 func (a *Application) Resubmit(content string) error {
+	if !a.IsRejected() {
+		return ErrInvalidStatusTransition
+	}
+
 	a.content = content
 	a.countOfSubmission += 1
 	a.status = Submitted
