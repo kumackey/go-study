@@ -14,19 +14,37 @@ import (
 	"reflect"
 	"runtime"
 	"time"
+
+	"github.com/julienschmidt/httprouter"
 )
 
 func main() {
+	mux := httprouter.New()
+	mux.GET("/hello/:name", hello)
+
+	server := http.Server{
+		Addr:    "127.0.0.1:8080",
+		Handler: mux,
+	}
+
+	server.ListenAndServe()
+}
+
+func hello(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	fmt.Fprintf(w, "hello, %s!\n", p.ByName("name"))
+}
+
+func main4() {
 	server := http.Server{
 		Addr: "127.0.0.1:8080",
 	}
-	http.Handle("/hello", protect(log(hello)))
+	http.Handle("/hello2", protect(log(hello2)))
 	http.Handle("/world", protect(log(world)))
 
 	server.ListenAndServe()
 }
 
-func hello(w http.ResponseWriter, r *http.Request) {
+func hello2(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Hello!")
 }
 
@@ -67,7 +85,7 @@ func main3() {
 		Addr: "127.0.0.1:8080",
 	}
 
-	http.Handle("/hello", &hello)
+	http.Handle("/hello2", &hello)
 	http.Handle("/world", &world)
 
 	server.ListenAndServe()
