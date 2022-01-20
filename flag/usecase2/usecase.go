@@ -1,4 +1,4 @@
-package usecase1
+package usecase
 
 import (
 	"errors"
@@ -24,15 +24,19 @@ func (u *RegisterLotteryOrderUsecase) exec(uid string) (lotteryOrderID string, e
 		return "", err
 	}
 
+	// Emailを出すために該当ユーザを抽出
 	user := u.userRepo.FindByUID(uid)
 
+	// Hoge社にAPIで連携。このときに通知も飛ぶ
 	hogeLotteryOrderID, err := u.hoge.postLotteries(user.Email)
 
+	// 内部で管理するため、宝くじの注文を作成
 	lotteryOrder, err := pkg.NewLotteryOrder(id, uid, "hoge", hogeLotteryOrderID)
 	if err != nil {
 		return "", errors.New("failed to create new lottery order")
 	}
 
+	// その注文を永続化
 	err = u.lotteryOrderRepo.Save(lotteryOrder)
 	if err != nil {
 		return "", errors.New("failed to save lottery order")
