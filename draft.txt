@@ -1,0 +1,2 @@
+- Goの日本語メソッド
+- バッチスクリプトをclean architectureで作り、output portの力に感謝する
