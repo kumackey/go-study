@@ -32,11 +32,27 @@ func handleRequest(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "GET":
 		err = handleGet(w, r)
+	case "POST":
+		err = handlePost(w, r)
+
 	}
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+}
+
+func handlePost(w http.ResponseWriter, r *http.Request) error {
+	len := r.ContentLength
+	body := make([]byte, len)
+	r.Body.Read(body)
+	var post Post
+	json.Unmarshal(body, &post)
+	post.create()
+	w.WriteHeader(200)
+	id := strconv.Itoa(post.Id)
+	w.Write([]byte(id))
+	return nil
 }
 
 func handleGet(w http.ResponseWriter, r *http.Request) error {

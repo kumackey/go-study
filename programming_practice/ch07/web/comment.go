@@ -9,7 +9,7 @@ type Comment struct {
 	Post    *Post
 }
 
-func (c *Comment) Create() (err error) {
+func (c *Comment) create() (err error) {
 	if c.Post == nil {
 		err = errors.New("投稿が見つかりません")
 		return
