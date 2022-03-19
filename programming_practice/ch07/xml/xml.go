@@ -7,12 +7,19 @@ import (
 	"os"
 )
 
+type Comment struct {
+	Id      string `xml:"id,attr"`
+	Content string `xml:"content"`
+	Author  Author `xml:"author"`
+}
+
 type Post struct {
-	XMLName xml.Name `xml:"post"`
-	Id      string   `xml:"id,attr"`
-	Content string   `xml:"content"`
-	Author  Author   `xml:"author"`
-	Xml     string   `xml:",innerxml"`
+	XMLName  xml.Name  `xml:"post"`
+	Id       string    `xml:"id,attr"`
+	Content  string    `xml:"content"`
+	Author   Author    `xml:"author"`
+	Xml      string    `xml:",innerxml"`
+	Comments []Comment `xml:"comments>comment"`
 }
 
 type Author struct {
@@ -21,7 +28,7 @@ type Author struct {
 }
 
 func main() {
-	xmlFile, err := os.Open("post.xml")
+	xmlFile, err := os.Open("programming_practice/ch07/xml/post2.xml")
 	if err != nil {
 		fmt.Println("Error opening XML file:", err)
 		return
