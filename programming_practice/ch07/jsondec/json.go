@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io"
 	"os"
 )
 
@@ -26,24 +25,26 @@ type Post struct {
 }
 
 func main() {
-	jsonFile, err := os.Open("programming_practice/ch07/json/post.json")
+	_, err := decode("programming_practice/ch07/jsondec/post.json")
 	if err != nil {
-		fmt.Println("Error opening", err)
+		fmt.Println("Error:", err)
+	}
+}
+
+func decode(filename string) (post Post, err error) {
+	jsonFile, err := os.Open(filename)
+	if err != nil {
+		fmt.Println("Error Opening", err)
 		return
 	}
 	defer jsonFile.Close()
 
 	decoder := json.NewDecoder(jsonFile)
-	for {
-		var post Post
-		err := decoder.Decode(&post)
-		if err == io.EOF {
-			break
-		}
-		if err != nil {
-			fmt.Println("Error decording", err)
-			return
-		}
-		fmt.Println(post)
+	err = decoder.Decode(&post)
+	if err != nil {
+		fmt.Println("Error decording", err)
+		return
 	}
+
+	return
 }
