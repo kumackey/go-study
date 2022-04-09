@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"sync"
 	"time"
 )
 
@@ -18,12 +17,12 @@ func printLetters1() {
 	}
 }
 
-func printLetters2(wg *sync.WaitGroup) {
+func printLetters2(w chan bool) {
 	for i := 'A'; i < 'A'+10; i++ {
 		time.Sleep(1 * time.Microsecond)
 		fmt.Printf("%c ", i)
 	}
-	wg.Done()
+	w <- true
 }
 
 func print1() {
@@ -36,18 +35,18 @@ func goPrint1() {
 	go printLetters1()
 }
 
-func printNumbers2(wg *sync.WaitGroup) {
+func printNumbers2(w chan bool) {
 	for i := 0; i < 10; i++ {
 		time.Sleep(1 * time.Microsecond)
 		fmt.Printf("%d ", i)
 	}
-	wg.Done()
+	w <- true
 }
 
 func main() {
-	var wg sync.WaitGroup
-	wg.Add(2)
-	go printNumbers2(&wg)
-	go printLetters2(&wg)
-	wg.Wait()
+	w1, w2 := make(chan bool), make(chan bool)
+	go printNumbers2(w1)
+	go printLetters2(w2)
+	<-w1
+	<-w2
 }
