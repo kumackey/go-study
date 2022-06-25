@@ -3,7 +3,16 @@
   <component name="Go" enabled="true" />
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
-    <content url="file://$MODULE_DIR$" />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/rust/guessing_game/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/rust/hello_cargo/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/rust/hello_carrrgop/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/rust/variables/src" isTestSource="false" />
+      <excludeFolder url="file://$MODULE_DIR$/rust/hello_cargo/target" />
+      <excludeFolder url="file://$MODULE_DIR$/rust/hello_carrrgop/target" />
+      <excludeFolder url="file://$MODULE_DIR$/rust/guessing_game/target" />
+      <excludeFolder url="file://$MODULE_DIR$/rust/variables/target" />
+    </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
