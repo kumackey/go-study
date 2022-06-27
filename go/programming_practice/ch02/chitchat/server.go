@@ -1,7 +1,7 @@
 package main
 
 import (
-	"example.com/go-mod-test/programming_practice/ch02/chitchat/data"
+	"example.com/go-mod-test/go/programming_practice/ch02/chitchat/data"
 	"net/http"
 )
 
