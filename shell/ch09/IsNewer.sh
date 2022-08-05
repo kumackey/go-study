@@ -6,7 +6,7 @@ IsNewer() {
     exit 1
   fi
 
-  if [ ! -f $1 -o ! -f $2 ]; then
+  if [ ! -f $1 ] || [ ! -f $2 ]; then
     return 1
   fi
 
