@@ -1,0 +1,12 @@
+#!/bin/sh
+
+if [ -f abc ]; then
+  echo The file abc already exists.
+else
+  echo Extracting abc
+  sed 's/^X//' >abc <<\EOF
+XThis is a
+XSample file
+EOF
+fi
+exit 0

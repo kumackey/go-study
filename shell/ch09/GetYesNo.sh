@@ -16,5 +16,3 @@ GetYesNo() {
     esac
   done
 }
-
-GetYesNo "$@"
