@@ -2,7 +2,6 @@ package usecase
 
 import (
 	"errors"
-	"example.com/go-mod-test/go/flag/pkg"
 )
 
 type HogeClient struct{}

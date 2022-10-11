@@ -2,7 +2,7 @@ package usecase
 
 import (
 	"errors"
-	"example.com/go-mod-test/go/flag/pkg"
+	"example.com/go-mod-test/flag/pkg"
 )
 
 const registersLotteryWithHoge = false
