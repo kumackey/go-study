@@ -5,8 +5,11 @@ import (
 	"errors"
 	hellopb "example.com/go-mod-test/grpc/pkg/grpc"
 	"fmt"
+	"google.golang.org/genproto/googleapis/rpc/errdetails"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/reflection"
+	"google.golang.org/grpc/status"
 	"io"
 	"log"
 	"net"
@@ -38,6 +41,7 @@ func main() {
 
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt)
+	<-quit
 	log.Println("stopping gRPC server...")
 	s.GracefulStop()
 }
@@ -51,6 +55,15 @@ type myServer struct {
 }
 
 func (s *myServer) Hello(_ context.Context, req *hellopb.HelloRequest) (*hellopb.HelloResponse, error) {
+	if req.GetName() == "err" {
+		stat := status.New(codes.Unknown, "unknown error occurred")
+		stat, _ = stat.WithDetails(&errdetails.DebugInfo{
+			Detail: "detail reason of err",
+		})
+		err := stat.Err()
+		return nil, err
+	}
+
 	return &hellopb.HelloResponse{
 		Message: fmt.Sprintf("Hello, %s", req.GetName()),
 	}, nil
