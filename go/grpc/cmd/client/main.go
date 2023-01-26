@@ -15,6 +15,34 @@ import (
 	"os"
 )
 
+func HelloServerStream() {
+	fmt.Println("Please enter your name.")
+	scaner.Scan()
+	name := scaner.Text()
+
+	req := &hellopb.HelloRequest{
+		Name: name,
+	}
+	stream, err := client.HelloServerStream(context.Background(), req)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	for {
+		res, err := stream.Recv()
+		if errors.Is(err, io.EOF) {
+			fmt.Println("all the responses have already received.")
+			break
+		}
+
+		if err != nil {
+			fmt.Println(err)
+		}
+		fmt.Println(res)
+	}
+}
+
 var (
 	scaner *bufio.Scanner
 	client hellopb.GreetingServiceClient
@@ -26,6 +54,7 @@ func main() {
 	scaner = bufio.NewScanner(os.Stdin)
 
 	address := "localhost:8080"
+
 	conn, err := grpc.Dial(
 		address,
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
@@ -70,34 +99,6 @@ func main() {
 		}
 	}
 M:
-}
-
-func HelloServerStream() {
-	fmt.Println("Please enter your name.")
-	scaner.Scan()
-	name := scaner.Text()
-
-	req := &hellopb.HelloRequest{
-		Name: name,
-	}
-	stream, err := client.HelloServerStream(context.Background(), req)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	for {
-		res, err := stream.Recv()
-		if errors.Is(err, io.EOF) {
-			fmt.Println("all the responses have already received.")
-			break
-		}
-
-		if err != nil {
-			fmt.Println(err)
-		}
-		fmt.Println(res)
-	}
 }
 
 func Hello() {
