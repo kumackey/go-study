@@ -11,7 +11,7 @@ import (
 
 func main() {
 	var err error
-	db, err := sql.Open("postgres", "user=gwp dbname=gwp password=gwp sslmode=disable")
+	db, err := sql.Open("mysql", "user=gwp dbname=gwp password=gwp sslmode=disable")
 	if err != nil {
 		panic(err)
 	}
