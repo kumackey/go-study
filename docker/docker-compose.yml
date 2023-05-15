@@ -34,3 +34,4 @@ networks:
 
 volumes:
   wordpress_db_volume:
+
