@@ -1,4 +1,4 @@
-package main
+package best4
 
 import (
 	"context"
@@ -20,10 +20,104 @@ import (
 )
 
 func main() {
-	argsFunc("a", "b", "c")
+
 }
 
-//
+// 委譲
+type Walker struct {
+	Name string
+}
+
+func (w *Walker) Walk() { fmt.Printf("%s is walking\n", w.Name) }
+
+type Runner struct {
+	Walker
+}
+
+func NewRunner(name string) *Runner {
+	return &Runner{Walker{Name: name}}
+}
+
+func (r Runner) Run() { fmt.Printf("%s is running\n", r.Name) }
+
+func callWalkAndRun() {
+	r := NewRunner("Taro")
+	r.Walk()
+	r.Run()
+}
+
+// embedded structの例
+type Attr struct {
+	Name string
+	Age  int
+}
+
+func (a Attr) String() string {
+	return fmt.Sprintf("%s(%d)", a.Name, a.Age)
+}
+
+type Teacher struct {
+	Attr
+	Subject string
+}
+
+type Student struct {
+	Attr
+	Score int
+}
+
+type AttrEx struct {
+	Name string
+}
+
+func (a AttrEx) String() string {
+	return fmt.Sprintf("(a.k.a. %s)", a.Name)
+}
+
+func (a AttrEx) String2() string {
+	return fmt.Sprintf("(a.k.a. %s)", a.Name)
+}
+
+type TeacherEx struct {
+	Attr
+	AttrEx
+	Subject string
+}
+
+func embeddedStructFunc() {
+	teacher := Teacher{
+		Attr: Attr{
+			Name: "Taro",
+			Age:  30,
+		},
+		Subject: "English",
+	}
+
+	student := Student{
+		Attr: Attr{
+			Name: "Hanako",
+			Age:  20,
+		},
+		Score: 80,
+	}
+
+	teacherEx := TeacherEx{
+		Attr: Attr{
+			Name: "Taro",
+			Age:  30,
+		},
+		AttrEx: AttrEx{
+			Name: "TaroEx",
+		},
+		Subject: "English",
+	}
+
+	fmt.Println(teacher.Name, teacher.Subject)
+	fmt.Println(student.Name, student.Score)
+	fmt.Println(teacherEx.Attr.Name)
+	fmt.Println(teacherEx.AttrEx.Name)
+	fmt.Printf("%#s\n", teacherEx.Attr)
+}
 
 // 可変調引数
 func argsFunc(args ...string) {
@@ -106,7 +200,7 @@ func f(ctx context.Context, wg *sync.WaitGroup) {
 		default:
 			// 何か処理
 		}
-		fmt.Println("goroutine: 処理")
+		fmt.Println("goroutine6: 処理")
 		time.Sleep(1 * time.Second)
 	}
 }

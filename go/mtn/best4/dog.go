@@ -1,6 +1,6 @@
 //go:build !cat
 
-package main
+package best4
 
 func Name() string {
 	return "dog"

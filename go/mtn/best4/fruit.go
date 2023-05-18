@@ -1,4 +1,4 @@
-package main
+package best4
 
 type Fruit int
 
