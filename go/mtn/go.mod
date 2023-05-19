@@ -6,6 +6,7 @@ require (
 	github.com/cention-sany/utf7 v0.0.0-20170124080048-26cad61bd60a // indirect
 	github.com/gocraft/web v0.0.0-20190207150652-9707327fb69b // indirect
 	github.com/gogs/chardet v0.0.0-20191104214054-4b6791f73a28 // indirect
+	github.com/google/go-cmp v0.5.9 // indirect
 	github.com/jaytaylor/html2text v0.0.0-20200412013138-3577fbdbcff7 // indirect
 	github.com/jhillyerd/enmime v0.11.1 // indirect
 	github.com/julienschmidt/httprouter v1.3.0 // indirect
