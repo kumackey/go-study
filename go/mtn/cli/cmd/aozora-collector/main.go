@@ -3,17 +3,23 @@ package main
 import (
 	"archive/zip"
 	"bytes"
+	"database/sql"
 	"errors"
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
+	"github.com/ikawaha/kagome-dict/ipa"
+	"github.com/ikawaha/kagome/v2/tokenizer"
 	"golang.org/x/text/encoding/japanese"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"net/url"
+	"os"
 	"path"
 	"regexp"
 	"strings"
+
+	_ "github.com/mattn/go-sqlite3"
 )
 
 type Entry struct {
@@ -26,21 +32,33 @@ type Entry struct {
 }
 
 func main() {
+	db, err := setupDB("datebase.sqlite")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
+
 	listURL := "https://www.aozora.gr.jp/index_pages/person879.html"
 	entries, err := findEntries(listURL)
 	if err != nil {
 		log.Fatal(err)
 	}
 
+	log.Printf("found %d entries\n", len(entries))
+
 	for _, entry := range entries {
+		log.Printf("adding %v\n", entry)
 		content, err := extractText(entry.ZipURL)
 		if err != nil {
 			log.Println(err)
 			continue
 		}
 
-		fmt.Println(entry.Author, entry.SiteURL)
-		fmt.Println(content)
+		err = addEntry(db, &entry, content)
+		if err != nil {
+			log.Println(err)
+			continue
+		}
 	}
 }
 
@@ -149,4 +167,74 @@ func extractText(zipURL string) (string, error) {
 	}
 
 	return "", errors.New("contents not found")
+}
+
+func setupDB(dsn string) (*sql.DB, error) {
+	db, err := sql.Open("sqlite3", dsn)
+	if err != nil {
+		return nil, err
+	}
+
+	queries := []string{
+		`CREATE TABLE IF NOT EXISTS authors(author_id TEXT, author TEXT, PRIMARY KEY(author_id))`,
+		`CREATE TABLE IF NOT EXISTS contents(author_id TEXT, title_id TEXT, title TEXT, content TEXT, PRIMARY KEY(author_id, title_id))`,
+		`CREATE VIRTUAL TABLE IF NOT EXISTS contents_fts USING fts4(words)`,
+	}
+
+	for _, q := range queries {
+		_, err := db.Exec(q)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return db, nil
+}
+
+func addEntry(db *sql.DB, entry *Entry, content string) error {
+	_, err := db.Exec(`REPLACE INTO authors(author_id, author) VALUES(?, ?)`,
+		entry.AuthorID,
+		entry.Author,
+	)
+	if err != nil {
+		return err
+	}
+
+	b, err := os.ReadFile("ababababa.txt")
+	if err != nil {
+		return err
+	}
+
+	b, err = japanese.ShiftJIS.NewDecoder().Bytes(b)
+	if err != nil {
+		return err
+	}
+
+	res, err := db.Exec(`REPLACE INTO contents(author_id, title_id, title, content) VALUES(?, ?, ?, ?)`,
+		entry.AuthorID,
+		entry.TitleID,
+		entry.Title,
+		content,
+	)
+	if err != nil {
+		return err
+	}
+
+	docID, err := res.LastInsertId()
+	if err != nil {
+		return err
+	}
+
+	t, err := tokenizer.New(ipa.Dict(), tokenizer.OmitBosEos())
+	if err != nil {
+		return err
+	}
+
+	seg := t.Wakati(content)
+	_, err = db.Exec(`REPLACE INTO contents_fts(docid, words) VALUES(?, ?)`, docID, strings.Join(seg, " "))
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
