@@ -22,6 +22,8 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
+var pageURLFormat = "https://www.aozora.gr.jp/cards/%s/card%s.html"
+
 type Entry struct {
 	AuthorID string
 	Author   string
@@ -77,7 +79,7 @@ func findEntries(siteURL string) ([]Entry, error) {
 		}
 
 		author, zipURL := findAuthorAndZip(
-			fmt.Sprintf("https://www.aozora.gr.jp/cards/%s/card%s.html", token[1], token[2]),
+			fmt.Sprintf(pageURLFormat, token[1], token[2]),
 		)
 
 		if zipURL != "" {
