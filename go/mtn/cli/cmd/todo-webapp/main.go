@@ -82,6 +82,7 @@ func main() {
 	defer db.Close()
 
 	db.AddQueryHook(bundebug.NewQueryHook(
+		bundebug.WithVerbose(true),
 		bundebug.FromEnv("BUNDEBUG"),
 	))
 
