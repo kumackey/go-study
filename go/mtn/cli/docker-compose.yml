@@ -1,0 +1,19 @@
+version: "3"
+services:
+  postgres:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: mysecretpassword
+    ports:
+      - "5432:5432"
+
+  app:
+    build: .
+    restart: always
+    depends_on:
+      - postgres
+    ports:
+      - "8989:8989"
+    environment:
+      DATABASE_URL: postgres://postgres:mysecretpassword@postgres:5432/postgres?sslmode=disable
