@@ -5,10 +5,6 @@ import (
 	"database/sql"
 	"embed"
 	"errors"
-	"github.com/labstack/echo/v4"
-	"github.com/uptrace/bun"
-	"github.com/uptrace/bun/dialect/pgdialect"
-	"github.com/uptrace/bun/extra/bundebug"
 	"html/template"
 	"io"
 	"io/fs"
@@ -18,6 +14,11 @@ import (
 	"time"
 
 	_ "github.com/lib/pq"
+
+	"github.com/labstack/echo/v4"
+	"github.com/uptrace/bun"
+	"github.com/uptrace/bun/dialect/pgdialect"
+	"github.com/uptrace/bun/extra/bundebug"
 )
 
 //go:embed static
@@ -39,8 +40,8 @@ type Todo struct {
 }
 
 type Data struct {
-	Errors []error
 	Todos  []Todo
+	Errors []error
 }
 
 func customFunc(todo *Todo) func([]string) []error {
@@ -50,7 +51,7 @@ func customFunc(todo *Todo) func([]string) []error {
 		}
 		dt, err := time.Parse("2006-01-02T15:04 MST", values[0]+" JST")
 		if err != nil {
-			return []error{echo.NewBindingError("until", values[0:1], "failed to parse time", err)}
+			return []error{echo.NewBindingError("until", values[0:1], "failed to decode time", err)}
 		}
 		todo.Until = dt
 		return nil
@@ -75,13 +76,11 @@ func formatDateTime(d time.Time) string {
 func main() {
 	sqldb, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 	defer sqldb.Close()
 
 	db := bun.NewDB(sqldb, pgdialect.New())
-	defer db.Close()
-
 	db.AddQueryHook(bundebug.NewQueryHook(
 		bundebug.WithVerbose(true),
 		bundebug.FromEnv("BUNDEBUG"),
@@ -94,6 +93,7 @@ func main() {
 	}
 
 	e := echo.New()
+
 	e.Renderer = &Template{
 		templates: template.Must(template.New("").
 			Funcs(template.FuncMap{
@@ -104,18 +104,19 @@ func main() {
 	e.GET("/", func(c echo.Context) error {
 		var todos []Todo
 		ctx := context.Background()
-		err = db.NewSelect().Model(&todos).Order("created_at").Scan(ctx)
+		err := db.NewSelect().Model(&todos).Order("created_at").Scan(ctx)
 		if err != nil {
 			e.Logger.Error(err)
 			return c.Render(http.StatusBadRequest, "index", Data{
 				Errors: []error{errors.New("Cannot get todos")},
 			})
 		}
-
 		return c.Render(http.StatusOK, "index", Data{Todos: todos})
 	})
+
 	e.POST("/", func(c echo.Context) error {
 		var todo Todo
+		// フォームパラメータをフィールドにバインド
 		errs := echo.FormFieldBinder(c).
 			Int64("id", &todo.ID).
 			String("content", &todo.Content).
@@ -126,7 +127,7 @@ func main() {
 			e.Logger.Error(errs)
 			return c.Render(http.StatusBadRequest, "index", Data{Errors: errs})
 		} else if todo.ID == 0 {
-			// IDが0の場合は新規作成
+			// ID が 0 の時は登録
 			ctx := context.Background()
 			if todo.Content == "" {
 				err = errors.New("Todo not found")
@@ -134,7 +135,7 @@ func main() {
 				_, err = db.NewInsert().Model(&todo).Exec(ctx)
 				if err != nil {
 					e.Logger.Error(err)
-					err = errors.New("Cannot create todo")
+					err = errors.New("Cannot update")
 				}
 			}
 		} else {
@@ -153,13 +154,12 @@ func main() {
 			}
 			if err != nil {
 				e.Logger.Error(err)
-				err = errors.New("Cannot update todo")
+				err = errors.New("Cannot update")
 			}
 		}
 		if err != nil {
 			return c.Render(http.StatusBadRequest, "index", Data{Errors: []error{err}})
 		}
-
 		return c.Redirect(http.StatusFound, "/")
 	})
 
@@ -167,7 +167,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fileServer := http.FileServer(http.FS(staticFs))
+	fileServer := http.FileServer(http.FileSystem(http.FS(staticFs)))
 	e.GET("/static/*", echo.WrapHandler(http.StripPrefix("/static/", fileServer)))
 	e.Logger.Fatal(e.Start(":8989"))
 }
