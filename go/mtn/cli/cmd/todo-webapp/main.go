@@ -81,6 +81,7 @@ func main() {
 	defer sqldb.Close()
 
 	db := bun.NewDB(sqldb, pgdialect.New())
+	defer db.Close()
 	db.AddQueryHook(bundebug.NewQueryHook(
 		bundebug.WithVerbose(true),
 		bundebug.FromEnv("BUNDEBUG"),
@@ -135,7 +136,7 @@ func main() {
 				_, err = db.NewInsert().Model(&todo).Exec(ctx)
 				if err != nil {
 					e.Logger.Error(err)
-					err = errors.New("Cannot update")
+					err = errors.New("Cannot create")
 				}
 			}
 		} else {
@@ -167,7 +168,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fileServer := http.FileServer(http.FileSystem(http.FS(staticFs)))
+	fileServer := http.FileServer(http.FS(staticFs))
 	e.GET("/static/*", echo.WrapHandler(http.StripPrefix("/static/", fileServer)))
 	e.Logger.Fatal(e.Start(":8989"))
 }
