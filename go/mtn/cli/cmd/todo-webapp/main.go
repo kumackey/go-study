@@ -144,7 +144,7 @@ func main() {
 				// 更新
 				var orig Todo
 				err = db.NewSelect().Model(&todo).Where("id = ?", todo.ID).Scan(ctx)
-				if err != nil {
+				if err == nil {
 					orig.Done = todo.Done
 					_, err = db.NewUpdate().Model(&todo).Where("id = ?", todo.ID).Exec(ctx)
 				}
