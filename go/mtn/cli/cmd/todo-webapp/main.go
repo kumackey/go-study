@@ -105,12 +105,12 @@ func main() {
 		err = db.NewSelect().Model(&todos).Order("created_at").Scan(ctx)
 		if err != nil {
 			e.Logger.Error(err)
-			return c.Render(http.StatusBadRequest, "index.html", Data{
+			return c.Render(http.StatusBadRequest, "index", Data{
 				Errors: []error{errors.New("Cannot get todos")},
 			})
 		}
 
-		return c.Render(http.StatusOK, "index.html", Data{Todos: todos})
+		return c.Render(http.StatusOK, "index", Data{Todos: todos})
 	})
 	e.POST("/", func(c echo.Context) error {
 		var todo Todo
@@ -122,7 +122,7 @@ func main() {
 			BindErrors()
 		if errs != nil {
 			e.Logger.Error(errs)
-			return c.Render(http.StatusBadRequest, "index.html", Data{Errors: errs})
+			return c.Render(http.StatusBadRequest, "index", Data{Errors: errs})
 		} else if todo.ID == 0 {
 			// IDが0の場合は新規作成
 			ctx := context.Background()
@@ -155,7 +155,7 @@ func main() {
 			}
 		}
 		if err != nil {
-			return c.Render(http.StatusBadRequest, "index.html", Data{Errors: []error{err}})
+			return c.Render(http.StatusBadRequest, "index", Data{Errors: []error{err}})
 		}
 
 		return c.Redirect(http.StatusFound, "/")
