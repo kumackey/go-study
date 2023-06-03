@@ -144,10 +144,10 @@ func main() {
 			} else {
 				// 更新
 				var orig Todo
-				err = db.NewSelect().Model(&todo).Where("id = ?", todo.ID).Scan(ctx)
+				err = db.NewSelect().Model(&orig).Where("id = ?", todo.ID).Scan(ctx)
 				if err == nil {
 					orig.Done = todo.Done
-					_, err = db.NewUpdate().Model(&todo).Where("id = ?", todo.ID).Exec(ctx)
+					_, err = db.NewUpdate().Model(&orig).Where("id = ?", todo.ID).Exec(ctx)
 				}
 			}
 			if err != nil {
