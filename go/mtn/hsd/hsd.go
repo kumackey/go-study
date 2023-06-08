@@ -1,3 +1,4 @@
+// Package hsd is a package for distance calculation.
 package hsd
 
 import (
@@ -7,10 +8,12 @@ import (
 	"time"
 )
 
+// StringDistance returns the distance between two strings.
 func StringDistance(lhs, rhs string) int {
 	return Distance([]rune(lhs), []rune(rhs))
 }
 
+// Distance returns the distance between two runes.
 func Distance(a []rune, b []rune) int {
 	dist := 0
 	if len(a) != len(b) {
