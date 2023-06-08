@@ -2,29 +2,14 @@ package main
 
 import (
 	"context"
-	"entgo.io/ent/entc"
-	"entgo.io/ent/entc/gen"
 	"fmt"
 	_ "github.com/lib/pq"
 	"log"
 	"todo/ent"
-
-	"entgo.io/contrib/entoas"
 )
 
 func main() {
-	execOpenAPI()
-}
-
-func execOpenAPI() {
-	ex, err := entoas.NewExtension()
-	if err != nil {
-		log.Fatal(err)
-	}
-	err = entc.Generate("./schema", &gen.Config{}, entc.Extensions(ex))
-	if err != nil {
-		log.Fatal(err)
-	}
+	execEnt()
 }
 
 func execEnt() {
