@@ -1,0 +1,14 @@
+#EXTM3U
+#EXT-X-MEDIA:TYPE=SUBTITLES,GROUP-ID="sub1",CHARACTERISTICS="public.accessibility.transcribes-spoken-dialog",NAME="English",AUTOSELECT=YES,DEFAULT=NO,FORCED=NO,LANGUAGE="en-US",URI="https://res.cloudinary.com/triggerz-eu-cld/raw/upload/v1605598514/HabitDrivers/Videos/HabitDrivers_for_Teams.mp4.vtt"
+#EXT-X-STREAM-INF:BANDWIDTH=678000,CODECS="avc1.640028,mp4a.40.2",RESOLUTION=1152x720,SUBTITLES="sub1"
+https://res.cloudinary.com/triggerz-eu-cld/video/upload/c_limit,w_1920,h_1080,vc_h264:high:4.0,br_8500k/v1605597336/HabitDrivers/Videos/HabitDrivers_for_Teams.m3u8
+#EXT-X-STREAM-INF:BANDWIDTH=659000,CODECS="avc1.4D401F,mp4a.40.2",RESOLUTION=1152x720,SUBTITLES="sub1"
+https://res.cloudinary.com/triggerz-eu-cld/video/upload/c_limit,w_1280,h_720,vc_h264:main:3.1,br_5500k/v1605597336/HabitDrivers/Videos/HabitDrivers_for_Teams.m3u8
+#EXT-X-STREAM-INF:BANDWIDTH=413000,CODECS="avc1.4D401F,mp4a.40.2",RESOLUTION=864x540,SUBTITLES="sub1"
+https://res.cloudinary.com/triggerz-eu-cld/video/upload/c_limit,w_960,h_540,vc_h264:main:3.1,br_3500k/v1605597336/HabitDrivers/Videos/HabitDrivers_for_Teams.m3u8
+#EXT-X-STREAM-INF:BANDWIDTH=349000,CODECS="avc1.42C01E,mp4a.40.2",RESOLUTION=576x360,SUBTITLES="sub1"
+https://res.cloudinary.com/triggerz-eu-cld/video/upload/c_limit,w_640,h_360,vc_h264:baseline:3.0,br_2m/v1605597336/HabitDrivers/Videos/HabitDrivers_for_Teams.m3u8
+#EXT-X-STREAM-INF:BANDWIDTH=254000,CODECS="avc1.42C01E,mp4a.40.2",RESOLUTION=432x270,SUBTITLES="sub1"
+https://res.cloudinary.com/triggerz-eu-cld/video/upload/c_limit,w_480,h_270,vc_h264:baseline:3.0,br_800k/v1605597336/HabitDrivers/Videos/HabitDrivers_for_Teams.m3u8
+#EXT-X-STREAM-INF:BANDWIDTH=196000,CODECS="avc1.42C01E,mp4a.40.2",RESOLUTION=320x200,SUBTITLES="sub1"
+https://res.cloudinary.com/triggerz-eu-cld/video/upload/c_limit,w_320,h_240,vc_h264:baseline:3.0,br_192k/v1605597336/HabitDrivers/Videos/HabitDrivers_for_Teams.m3u8
