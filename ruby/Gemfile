@@ -4,5 +4,6 @@ source "https://rubygems.org"
 
 gem 'faraday'
 gem 'webrick'
+gem 'aws-sdk-s3', '~> 1'
 
 gem "byebug", "~> 11.1", :groups => [:development, :test]
