@@ -2,10 +2,6 @@ name: test
 
 on:
   workflow_dispatch:
-    inputs:
-      channel_id:
-        required: true
-        type: string
 
 jobs:
   comment:
@@ -15,13 +11,13 @@ jobs:
       - name: Convert PR list to URLs
         id: convert-pr-to-urls
         run: |
-          {
-            echo 'cat <<EOF'
-            echo '#100385 @kumackey'
-            echo '#100386 @kumackey'
-            echo '#100387 @kumackey_display_name'
-            echo 'EOF'
-          } > pr_list
+          pr_list=$(
+          cat <<EOF
+          #100385 @kumackey
+          #100386 @kumackey
+          #100387 @kumackey_display_name
+          EOF
+          )
           pull_url="${{ github.server_url }}/${{ github.repository }}/pull/"
           prs=$(echo "$pr_list" | grep -Eo "#[0-9]+ @[^ ]+" | awk -v url="$pull_url" '{gsub("#", "", $1); print url$1 " <"$2">"}')
           {
