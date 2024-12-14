@@ -42,7 +42,7 @@ jobs:
               - type: section
                 text:
                   type: mrkdwn
-                  text: ${{ steps.convert-pr-to-urls.outputs.prs }}
+                  text: ${{ toJSON(steps.convert-pr-to-urls.outputs.prs) }}
               - type: context
                 elements:
                   - type: mrkdwn
