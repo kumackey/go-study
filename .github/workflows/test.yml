@@ -39,7 +39,10 @@ jobs:
                   text: |
                     <@channel> single-release PR が作成されました！ :ready:
                     Associated PRs:
-                    ${{ steps.convert-pr-to-urls.outputs.prs }}
+              - type: section
+                text:
+                  type: mrkdwn
+                  text: ${{ steps.convert-pr-to-urls.outputs.prs }}
               - type: context
                 elements:
                   - type: mrkdwn
