@@ -1,0 +1,52 @@
+name: test
+
+on:
+  workflow_dispatch:
+    inputs:
+      channel_id:
+        required: true
+        type: string
+
+jobs:
+  comment:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Convert PR list to URLs
+        id: convert-pr-to-urls
+        run: |
+          {
+            echo 'cat <<EOF'
+            echo '#100385 @kumackey'
+            echo '#100386 @kumackey'
+            echo '#100387 @kumackey_display_name'
+            echo 'EOF'
+          } > pr_list
+          pull_url="${{ github.server_url }}/${{ github.repository }}/pull/"
+          prs=$(echo "$pr_list" | grep -Eo "#[0-9]+ @[^ ]+" | awk -v url="$pull_url" '{gsub("#", "", $1); print url$1 " <"$2">"}')
+          {
+            echo 'prs<<EOF'
+            echo "$prs"
+            echo 'EOF'
+          } >> "$GITHUB_OUTPUT"
+
+      - uses: slackapi/slack-github-action@v2
+        if: ${{ steps.convert-pr-to-urls.outputs.prs != '' }}
+        with:
+          method: chat.postMessage
+          token: ${{ secrets.SLACK_APP_TOKEN }}
+          payload: |
+            channel: C05LAN6RX3Q
+            blocks:
+              - type: section
+                text:
+                  type: mrkdwn
+                  text: |
+                    <@channel> single-release PR が作成されました！ :ready:
+                    Associated PRs:
+                    ${{ toJSON(steps.convert-pr-to-urls.outputs.prs) }}
+              - type: context
+                elements:
+                  - type: mrkdwn
+                    text: |
+                      :github: <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|GitHub Actions>
